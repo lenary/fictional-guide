@@ -1,0 +1,24 @@
+name: "Trust In Soft CI"
+on:
+  pull_request: [opened]
+
+jobs:
+  add-comment:
+    name: "Add Comment"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Add Comment Badge to PR"
+        env:
+          URL: ${{ github.event.pull_request.comments_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ADDR: ${{ github.repository }}
+          GITHUB_BRANCH: ${{  github.event.pull_request.head.ref  }}
+        if: ${{ github.event.pull_request.head.repo.id == github.event.pull_request.base.repo.id }}
+        run: |
+          curl \
+            -X POST \
+            "${URL}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            --data "{\"body\": \"[![TrustInSoft CI](https://ci.trust-in-soft.com/projects/${GITHUB_ADDR}.svg?branch=${GITHUB_BRANCH})](https://ci.trust-in-soft.com/projects/${GITHUB_ADDR})\"}"
