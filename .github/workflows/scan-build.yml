@@ -1,0 +1,34 @@
+name: 'Scan-Build Everything'
+on:
+  - pull_request
+
+jobs:
+  scan-build:
+    name: "Scan Build"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install scan-build
+        run: |
+          sudo apt-get install clang-tools-9
+
+          echo "/usr/lib/llvm-9/bin" >> $GITHUB_PATH
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Scan-build
+        run: |
+          mkdir -p scan-build-out
+
+          # scan-build clang, but turn off clang warnings
+          scan-build -analyze-headers -k --status-bugs \
+            -o scan-build-out \
+            clang -w -c test.c -o /dev/null
+
+      - name: Upload Scan-Build Results
+        uses: actions/upload-artifact@v1
+        with:
+          name: "Scan-Build HTML Output"
+          path: scan-build-out
+        if: ${{ always() }}
