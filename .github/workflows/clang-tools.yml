@@ -1,14 +1,14 @@
-name: 'Scan-Build Everything'
+name: 'Clang Tools'
 on:
   - pull_request
 
 jobs:
   scan-build:
-    name: "Scan Build"
-    runs-on: ubuntu-latest
+    name: "Clang Static Analyzer"
+    runs-on: ubuntu-20.04
 
     steps:
-      - name: Install scan-build
+      - name: Install Clang Tools
         run: |
           sudo apt-get install clang-tools-9
 
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run Scan-build
+      - name: Run Scan-Build
         run: |
           mkdir -p scan-build-out
 
@@ -32,3 +32,22 @@ jobs:
           name: "Scan-Build HTML Output"
           path: scan-build-out
         if: ${{ always() }}
+
+  clang-tidy:
+    name: "Clang Tidy"
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Install Clang Tidy
+        run: |
+          sudo apt-get install clang-tidy-9
+
+          echo "/usr/lib/llvm-9/bin" >> $GITHUB_PATH
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Clang-Tidy
+        run: |
+          clang-tidy --warnings-as-errors='*' \
+            test.c --
