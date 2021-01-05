@@ -1,13 +1,9 @@
 // Example Goes In Here
 
-int* p;
-int x;
-
-int f(void) {
-  p = p + (x++);
-  return p;
-}
+int* p = NULL;
+int x = 1;
 
 int main(void) {
+  p = p + (x++);
   return 0;
 }
