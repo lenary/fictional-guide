@@ -1,6 +1,6 @@
 // Example Goes In Here
 
-int* p = NULL;
+int* p = (int*)0x500000;
 int x = 1;
 
 int main(void) {
